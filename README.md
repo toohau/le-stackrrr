@@ -5,8 +5,8 @@ Deploy ARR apps with tsdproxy using just 1 command (full set with Jellyfin and q
 - [Servarr Wiki](https://wiki.servarr.com/)
 - [Trash Guides](https://trash-guides.info/)
 - [Ascii ART](https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow)
-- [automation-avenue](https://www.youtube.com/watch?v=1eqPmDvMjLY)
-- [tsdproxy-tailscale](https://www.youtube.com/watch?v=5lJrXEXF8eM)
+- [automation-avenue-video](https://www.youtube.com/watch?v=1eqPmDvMjLY)
+- [tsdproxy-tailscale-video](https://www.youtube.com/watch?v=5lJrXEXF8eM)
 ### Download and unzip Files from GitHub:
 Moded stack from https://github.com/toohau/le-stackrrr.git <br />
 Original stack from https://github.com/automation-avenue/youtube-39-arr-apps-1-click <br />
