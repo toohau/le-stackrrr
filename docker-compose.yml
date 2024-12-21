@@ -1,0 +1,340 @@
+services:
+#████████╗███████╗██████╗       ██████╗ ██████╗  ██████╗ ██╗  ██╗██╗   ██╗
+#╚══██╔══╝██╔════╝██╔══██╗      ██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝╚██╗ ██╔╝
+#   ██║   ███████╗██║  ██║█████╗██████╔╝██████╔╝██║   ██║ ╚███╔╝  ╚████╔╝ 
+#   ██║   ╚════██║██║  ██║╚════╝██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗   ╚██╔╝  
+#   ██║   ███████║██████╔╝      ██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║   
+#   ╚═╝   ╚══════╝╚═════╝       ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   
+
+  tsdproxy:
+    image: almeidapaulopt/tsdproxy:latest
+    container_name: tsdproxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ARRPATH}tsdproxydata/data:/data
+#      - ${ARRPATH}tsdproxydata/config:/config
+    environment:
+      # Get AuthKey from your Tailscale account
+      - TSDPROXY_AUTHKEY=tskey-auth-123abc-123abc
+      # Address of docker server (access to example.com ports)
+      - TSDPROXY_DATADIR:${ARRPATH}tsdproxydata/data:/data
+      - TSDPROXY_HOSTNAME=xxx.xxx.xxx.x
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    env_file:
+      - '.env'
+    restart: unless-stopped
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "vaultwarden"
+    environment:
+      DOMAIN: "https://xxx.xxxx.ts.net"  # Your domain here!
+    volumes:
+      - ${ARRPATH}./vw-data:/data
+
+#███████ ███████  █████  ██████  ██   ██ ███    ██  ██████  
+#██      ██      ██   ██ ██   ██  ██ ██  ████   ██ ██       
+#███████ █████   ███████ ██████    ███   ██ ██  ██ ██   ███ 
+#     ██ ██      ██   ██ ██   ██  ██ ██  ██  ██ ██ ██    ██ 
+#███████ ███████ ██   ██ ██   ██ ██   ██ ██   ████  ██████  
+#
+  searxng:
+    container_name: searxng
+    image: docker.io/searxng/searxng:latest
+    restart: unless-stopped
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "search"
+    ports:
+      - 8082:8080
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=https://search.your.domain.com/
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    env_file:
+      - '.env'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+  redis:
+    container_name: redis
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    volumes:
+      - valkey-data2:/data
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    env_file:
+      - '.env'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+# ██████╗ ██████╗  ██████╗ ██╗    ██╗██╗      █████╗ ██████╗ ██████╗ 
+# ██╔══██╗██╔══██╗██╔═══██╗██║    ██║██║     ██╔══██╗██╔══██╗██╔══██╗
+# ██████╔╝██████╔╝██║   ██║██║ █╗ ██║██║     ███████║██████╔╝██████╔╝
+# ██╔═══╝ ██╔══██╗██║   ██║██║███╗██║██║     ██╔══██║██╔══██╗██╔══██╗
+# ██║     ██║  ██║╚██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██║██║  ██║
+# ╚═╝     ╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═
+  prowlarr:
+    image: linuxserver/prowlarr:1.27.0
+    container_name: prowlarr
+    hostname: prowlarr
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "prowlarr"
+    volumes:
+      - ${ARRPATH}Prowlarr/config:/config
+      - ${ARRPATH}Prowlarr/backup:/data/Backup
+      - ${ARRPATH}Downloads:/downloads
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+    env_file:
+      - '.env'
+# ███████╗ ██████╗ ███╗   ██╗ █████╗ ██████╗ ██████╗ 
+# ██╔════╝██╔═══██╗████╗  ██║██╔══██╗██╔══██╗██╔══██╗
+# ███████╗██║   ██║██╔██╗ ██║███████║██████╔╝██████╔╝
+# ╚════██║██║   ██║██║╚██╗██║██╔══██║██╔══██╗██╔══██╗
+# ███████║╚██████╔╝██║ ╚████║██║  ██║██║  ██║██║  ██║
+# ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝                                                 
+  sonarr:
+    image: linuxserver/sonarr:4.0.11
+    container_name: sonarr
+    hostname: sonarr
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "sonarr"
+    volumes:
+      - ${ARRPATH}Sonarr/config:/config
+      - ${ARRPATH}Sonarr/backup:/data/Backup
+      - ${ARRPATH}Sonarr/tvshows:/data/tvshows
+      - ${ARRPATH}Downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+    env_file:
+      - '.env'
+# ██████╗  █████╗ ██████╗  █████╗ ██████╗ ██████╗ 
+# ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗
+# ██████╔╝███████║██║  ██║███████║██████╔╝██████╔╝
+# ██╔══██╗██╔══██║██║  ██║██╔══██║██╔══██╗██╔══██╗
+# ██║  ██║██║  ██║██████╔╝██║  ██║██║  ██║██║  ██║
+# ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝                                              
+  radarr:
+    image: linuxserver/radarr:5.15.1
+    container_name: radarr
+    hostname: radarr
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "radarr"
+    volumes:
+      - ${ARRPATH}Radarr/config:/config
+      - ${ARRPATH}Radarr/movies:/data/movies
+      - ${ARRPATH}Radarr/backup:/data/Backup
+      - ${ARRPATH}Downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+    env_file:
+      - '.env'
+# ██╗     ██╗██████╗  █████╗ ██████╗ ██████╗ 
+# ██║     ██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗
+# ██║     ██║██║  ██║███████║██████╔╝██████╔╝
+# ██║     ██║██║  ██║██╔══██║██╔══██╗██╔══██╗
+# ███████╗██║██████╔╝██║  ██║██║  ██║██║  ██║
+# ╚══════╝╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+  lidarr:
+    image: linuxserver/lidarr:2.7.1
+    container_name: lidarr
+    hostname: lidarr
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "lidarr"
+    volumes:
+      - ${ARRPATH}Lidarr/config:/config
+      - ${ARRPATH}Lidarr/music:/data/musicfolder
+      - ${ARRPATH}Downloads:/downloads
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+    env_file:
+      - '.env'
+# ██████╗ ███████╗ █████╗ ██████╗  █████╗ ██████╗ ██████╗ 
+# ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗
+# ██████╔╝█████╗  ███████║██║  ██║███████║██████╔╝██████╔╝
+# ██╔══██╗██╔══╝  ██╔══██║██║  ██║██╔══██║██╔══██╗██╔══██╗
+# ██║  ██║███████╗██║  ██║██████╔╝██║  ██║██║  ██║██║  ██║
+# ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+  readarr:
+    image: linuxserver/readarr:0.4.5-nightly
+    container_name: readarr
+    hostname: readarr
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "readarr"
+    volumes:
+      - ${ARRPATH}Readarr/config:/config
+      - ${ARRPATH}Readarr/books:/data/books
+      - ${ARRPATH}Downloads:/downloads
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+    env_file:
+      - '.env'
+# ██╗  ██╗ ██████╗ ███╗   ███╗ █████╗ ██████╗ ██████╗ 
+# ██║  ██║██╔═══██╗████╗ ████║██╔══██╗██╔══██╗██╔══██╗
+# ███████║██║   ██║██╔████╔██║███████║██████╔╝██████╔╝
+# ██╔══██║██║   ██║██║╚██╔╝██║██╔══██║██╔══██╗██╔══██╗
+# ██║  ██║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+# ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "homarr"
+    volumes:
+      - ${ARRPATH}Homarr/configs:/app/data/configs
+      - ${ARRPATH}Homarr/icons:/app/public/icons
+      - ${ARRPATH}Homarr/data:/data
+    ports:
+      - '7575:7575'
+    env_file:
+      - '.env'
+#      ██╗███████╗██╗     ██╗  ██╗   ██╗███████╗██╗███╗   ██╗
+#      ██║██╔════╝██║     ██║  ╚██╗ ██╔╝██╔════╝██║████╗  ██║
+#      ██║█████╗  ██║     ██║   ╚████╔╝ █████╗  ██║██╔██╗ ██║
+# ██   ██║██╔══╝  ██║     ██║    ╚██╔╝  ██╔══╝  ██║██║╚██╗██║
+# ╚█████╔╝███████╗███████╗███████╗██║   ██║     ██║██║ ╚████║
+#  ╚════╝ ╚══════╝╚══════╝╚══════╝╚═╝   ╚═╝     ╚═╝╚═╝  ╚═══╝
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "jellyfin"
+    ports:
+      - '8096:8096/tcp'   # Jellyfin web interface
+      - '7359:7359/udp'   # Network discovery
+      - '1900:1900/udp'   # DLNA port
+    volumes:
+      - ${ARRPATH}Jellyfin/config:/config
+      - ${ARRPATH}Radarr/movies:/data/Movies
+      - ${ARRPATH}Sonarr/tvshows:/data/TVShows
+      - ${ARRPATH}Lidarr/music:/data/Music
+      - ${ARRPATH}Readarr/books:/data/Books
+    devices:
+      - /dev/dri/renderD128  # Pass through the render device directly
+    group_add:
+      - "122"  # Change this to match your "render" host group id and remove this comment
+    env_file:
+      - '.env'
+#  ██████╗ ██████╗ ██╗████████╗████████╗ ██████╗ ██████╗ ██████╗ ███████╗███╗   ██╗████████╗
+# ██╔═══██╗██╔══██╗██║╚══██╔══╝╚══██╔══╝██╔═══██╗██╔══██╗██╔══██╗██╔════╝████╗  ██║╚══██╔══╝
+# ██║   ██║██████╔╝██║   ██║      ██║   ██║   ██║██████╔╝██████╔╝█████╗  ██╔██╗ ██║   ██║   
+# ██║▄▄ ██║██╔══██╗██║   ██║      ██║   ██║   ██║██╔══██╗██╔══██╗██╔══╝  ██║╚██╗██║   ██║   
+# ╚██████╔╝██████╔╝██║   ██║      ██║   ╚██████╔╝██║  ██║██║  ██║███████╗██║ ╚████║   ██║   
+#  ╚══▀▀═╝ ╚═════╝ ╚═╝   ╚═╝      ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝                                                                                          
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    hostname: qbittorrent
+    restart: unless-stopped
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "qbittorrent"
+    volumes:
+      - ${ARRPATH}qbittorrent/config:/config
+      - ${ARRPATH}Downloads:/downloads
+    ports:
+      - 8085:8080
+      - 40789:40789
+      - 40789:40789/udp
+    environment:
+      - WEBUI_PORT=8085
+      - TORRENTING_PORT=40789
+    healthcheck:
+      start_period: 15s
+    env_file:
+      - '.env'
+#██████   ██████  ██████  ████████  █████  ██ ███    ██ ███████ ██████  
+#██   ██ ██    ██ ██   ██    ██    ██   ██ ██ ████   ██ ██      ██   ██ 
+#██████  ██    ██ ██████     ██    ███████ ██ ██ ██  ██ █████   ██████  
+#██      ██    ██ ██   ██    ██    ██   ██ ██ ██  ██ ██ ██      ██   ██ 
+#██       ██████  ██   ██    ██    ██   ██ ██ ██   ████ ███████ ██   ██
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "portainer"
+#    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    ports:
+      - "9000:9000"
+    volumes:
+      - ${ARRPATH}portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    env_file:
+      - '.env'
+##  PDF
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:latest
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "pdf"
+    volumes:
+      - ${ARRPATH}./trainingData:/usr/share/tessdata #Required for extra OCR languages
+      - ${ARRPATH}./extraConfigs:/configs
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
+      - LANGS=en_GB
+    ports:
+      - 8089:8080
+    env_file:
+      - '.env'
+ ## Audiobooks
+  abs:
+    image: advplyr/audiobookshelf
+    container_name: abs
+    volumes:
+      - ${ARRPATH}/home/zaphod/audiobooks:/audiobooks
+      - ${ARRPATH}audiobooks-metadata:/metadata
+      - ${ARRPATH}audiobooks-config:/config
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "books"
+    ports:
+      - 8086:80
+    env_file:
+      - '.env'
+    restart: unless-stopped
+
+volumes:
+  valkey-data2:
+  tsdproxydata:
+  portainer_data:
+  audiobooks-config:
+  audiobooks-metadata:
