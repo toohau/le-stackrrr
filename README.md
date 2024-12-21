@@ -91,23 +91,23 @@ Then add media library in Jellyfin  matching folders configured in docker-compos
 /data/Books <br />
 
 **tsdproxy:**<br />
-if you just happen to encounter a tsdproxy try to find tsdproxy.yaml, down below is the simple solution
-Uncomment the tsdproxydta/data:/data
-    image: almeidapaulopt/tsdproxy:latest
-    container_name: tsdproxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${ARRPATH}tsdproxydata/data:/data
-#      - ${ARRPATH}tsdproxydata/config:/config <----------------------------------------------------
-#directory will be tsdproxydata/config/tsdroxy.yaml
-######################################################################################################
-defaultproxyprovider: default
-docker:
-  srv1:
-    host: unix:///var/run/docker.sock
-    defaultproxyprovider: default
-tailscale:
-  providers:
-    default:
-      authkey: tskey-auth-k0AaAaA00000AAAA-0AAAaAaAAaa1aaaAAaaAaaaAAAaaaAAAA # define authkey here
-######################################################################################################
+if you just happen to encounter a tsdproxy try to find tsdproxy.yaml, down below is the simple solution<br />
+Uncomment the tsdproxydta/data:/data<br />
+    image: almeidapaulopt/tsdproxy:latest<br />
+    container_name: tsdproxy<br />
+    volumes:<br />
+      - /var/run/docker.sock:/var/run/docker.sock<br />
+      - ${ARRPATH}tsdproxydata/data:/data<br />
+#      - ${ARRPATH}tsdproxydata/config:/config <----------------------------------------------------<br />
+#directory will be tsdproxydata/config/tsdroxy.yaml<br />
+######################################################################################################<br />
+defaultproxyprovider: default<br />
+docker:<br />
+  srv1:<br />
+    host: unix:///var/run/docker.sock<br />
+    defaultproxyprovider: default<br />
+tailscale:<br />
+  providers:<br />
+    default:<br />
+      authkey: tskey-auth-k0AaAaA00000AAAA-0AAAaAaAAaa1aaaAAaaAaaaAAAaaaAAAA # define authkey here<br />
+######################################################################################################<br />
