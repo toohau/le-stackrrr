@@ -1,5 +1,5 @@
-# youtube-39-arr-apps-1-click
-Video 39 - Deploy ARR apps using just 1 command (full set with Jellyfin and qBittorrent !!!)
+# le-stackrrr
+Deploy ARR apps with tsdproxy using just 1 command (full set with Jellyfin and qBittorrent !!!)
 
 ### Useful Links:
 - [Servarr Wiki](https://wiki.servarr.com/)
@@ -8,10 +8,10 @@ Video 39 - Deploy ARR apps using just 1 command (full set with Jellyfin and qBit
 - [automation-avenue](https://www.youtube.com/watch?v=1eqPmDvMjLY)
 - [tsdproxy-tailscale](https://www.youtube.com/watch?v=5lJrXEXF8eM)
 ### Download and unzip Files from GitHub:
-Moded stack from https://github.com/toohau/le-stackrrr.git
+Moded stack from https://github.com/toohau/le-stackrrr.git <br />
 Original stack from https://github.com/automation-avenue/youtube-39-arr-apps-1-click <br />
-cd /home/marek/Downloads <br />
-unzip youtube-39-arr-apps-1-click <br />
+cd /home/user/Downloads <br />
+unzip le-stack <br />
 
 ### Installation process:
 Make sure you are in the same folder as docker-compose.yml and .env file, then 'up' to deploy, 'stop' and 'rm' to stop and remove the stack  :<br />
