@@ -100,7 +100,7 @@ Uncomment the tsdproxydta/data:/config<br />
       - ${ARRPATH}tsdproxydata/data:/data<br />
       - ${ARRPATH}tsdproxydata/config:/config <----------------------------------------------------<br />
 #directory will be tsdproxydata/config/tsdroxy.yaml<br />
-######################################################################################################<br />
+#################################################################################################<br />
 defaultproxyprovider: default<br />
 docker:<br />
   srv1:<br />
@@ -110,4 +110,4 @@ tailscale:<br />
   providers:<br />
     default:<br />
       authkey: tskey-auth-k0AaAaA00000AAAA-0AAAaAaAAaa1aaaAAaaAaaaAAAaaaAAAA # define authkey here<br />
-######################################################################################################<br />
+#################################################################################################<br />
