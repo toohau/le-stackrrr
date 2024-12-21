@@ -98,7 +98,7 @@ Uncomment the tsdproxydta/data:/data<br />
     volumes:<br />
       - /var/run/docker.sock:/var/run/docker.sock<br />
       - ${ARRPATH}tsdproxydata/data:/data<br />
-#      - ${ARRPATH}tsdproxydata/config:/config <----------------------------------------------------<br />
+--->  - ${ARRPATH}tsdproxydata/config:/config <----------------------------------------------------<br />
 #directory will be tsdproxydata/config/tsdroxy.yaml<br />
 ######################################################################################################<br />
 defaultproxyprovider: default<br />
