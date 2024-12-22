@@ -95,7 +95,7 @@ services:
 # ██║     ██║  ██║╚██████╔╝╚███╔███╔╝███████╗██║  ██║██║  ██║██║  ██║
 # ╚═╝     ╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═
   prowlarr:
-    image: linuxserver/prowlarr:1.27.0
+    image: linuxserver/prowlarr:latest
     container_name: prowlarr
     hostname: prowlarr
     labels:
@@ -117,7 +117,7 @@ services:
 # ███████║╚██████╔╝██║ ╚████║██║  ██║██║  ██║██║  ██║
 # ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝                                                 
   sonarr:
-    image: linuxserver/sonarr:4.0.11
+    image: linuxserver/sonarr:latest
     container_name: sonarr
     hostname: sonarr
     labels:
@@ -140,7 +140,7 @@ services:
 # ██║  ██║██║  ██║██████╔╝██║  ██║██║  ██║██║  ██║
 # ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝                                              
   radarr:
-    image: linuxserver/radarr:5.15.1
+    image: linuxserver/radarr:latest
     container_name: radarr
     hostname: radarr
     labels:
@@ -163,7 +163,7 @@ services:
 # ███████╗██║██████╔╝██║  ██║██║  ██║██║  ██║
 # ╚══════╝╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
   lidarr:
-    image: linuxserver/lidarr:2.7.1
+    image: linuxserver/lidarr:latest
     container_name: lidarr
     hostname: lidarr
     labels:
@@ -185,7 +185,7 @@ services:
 # ██║  ██║███████╗██║  ██║██████╔╝██║  ██║██║  ██║██║  ██║
 # ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
   readarr:
-    image: linuxserver/readarr:0.4.5-nightly
+    image: linuxserver/readarr:nightly
     container_name: readarr
     hostname: readarr
     labels:
@@ -228,7 +228,7 @@ services:
 # ╚█████╔╝███████╗███████╗███████╗██║   ██║     ██║██║ ╚████║
 #  ╚════╝ ╚══════╝╚══════╝╚══════╝╚═╝   ╚═╝     ╚═╝╚═╝  ╚═══╝
   jellyfin:
-    image: linuxserver/jellyfin
+    image: linuxserver/jellyfin:latest
     container_name: jellyfin
     restart: unless-stopped
     labels:
@@ -317,7 +317,7 @@ services:
       - '.env'
  ## Audiobooks
   abs:
-    image: advplyr/audiobookshelf
+    image: advplyr/audiobookshelf:latest
     container_name: abs
     volumes:
       - ${ARRPATH}/home/zaphod/audiobooks:/audiobooks
